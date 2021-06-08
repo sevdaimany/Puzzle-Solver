@@ -24,4 +24,3 @@ for i in range(1,n+1):
     for ii in range(1,m+1):
         mygraph[(i,ii)].append(Cell())
 
-print(mygraph)
