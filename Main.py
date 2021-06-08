@@ -22,6 +22,6 @@ for i in range(n):
 
 for i in range(1,n+1):
     for ii in range(1,m+1):
-        mygraph[(i,ii)] = Cell()
+        mygraph[(i,ii)] = Cell(mypuzzle[i-1][ii-1])
 
-
+print(mygraph)

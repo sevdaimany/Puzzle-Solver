@@ -4,4 +4,5 @@ class Cell:
         self.value = value
         if value != -1 :
             self.satisfied = True
-        self.satisfied = False
+        else :
+            self.satisfied = False
