@@ -3,7 +3,7 @@ import collections
 from Cell import Cell
 
 mypuzzle = []
-mygraph = collections.defaultdict(list)
+mygraph = dict()
 
 
 address = ".\puzzles\puzzle0.txt"
@@ -22,5 +22,6 @@ for i in range(n):
 
 for i in range(1,n+1):
     for ii in range(1,m+1):
-        mygraph[(i,ii)].append(Cell())
+        mygraph[(i,ii)] = Cell()
+
 
