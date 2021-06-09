@@ -51,19 +51,30 @@ def forward_checking(graph ,x, y , n):
             if onesCol >= n/2 :
                 if 1 in graph[(i , y)].domain:
                     graph[(i , y)].domain.remove(1)
+                    if len(graph[(i , y)].domain) == 0:
+                        return False
             if  zerosCol >= n/2 :
                 if 0 in graph[(i , y)].domain:
                     graph[(i , y)].domain.remove(0)
+                    if len(graph[(i , y)].domain) == 0:
+                        return False
+            
 
         if graph[(x , i)].value == -1:
             checkEmptyInRow = True
             if onesRow >= n/2 :
                 if 1 in graph[(x , i)].domain:
                     graph[(x , i)].domain.remove(1)
+                    if len(graph[(x , i)].domain) == 0:
+                        return False
+            
                 
             if zerosRow >= n/2 :
                 if 0 in graph[(x , i)].domain:
                     graph[(x , i)].remove(0)
+                    if len(graph[(x , i)].domain) == 0:
+                        return False
+        
 
 #  check in row
     for i in range(-2 , 3 , 2):
@@ -74,18 +85,29 @@ def forward_checking(graph ,x, y , n):
                 if graph[(x, y)] == 1 and graph[(x + i/2 , y)] == 1:
                     if 1 in graph[(x + i, y)].domain:
                         graph[(x + i, y)].domain.remove(1)
+                        if len(graph[(x+ i , y)].domain) == 0:
+                            return False
                 if graph[(x, y)] == 0 and graph[(x + i/2 , y)] == 0:
                     if 0 in graph[(x + i, y)].domain:
                         graph[(x + i, y)].domain.remove(0)
+                        if len(graph[(x + i , y)].domain) == 0:
+                            return False
+            
         
         if y + i < n and y + i >= 0: 
             if graph[(x , y + i)] == -1 :
                 if graph[(x, y)] == 1 and graph[(x , y + i/2)] == 1:
                     if 1 in graph[(x, y + i)].domain:
                         graph[(x , y + i)].domain.remove(1)
+                        if len(graph[(x , y + i)].domain) == 0:
+                            return False
+            
                 if graph[(x, y)] == 0 and graph[(x  , y + i/2)] == 0:
                     if 0 in graph[(x, y + i)].domain:
                         graph[(x, y + i)].domain.remove(0)
+                        if len(graph[(x , y + i)].domain) == 0:
+                            return False
+            
 
     #    check Same  NOT SURE
         
@@ -99,6 +121,8 @@ def forward_checking(graph ,x, y , n):
         #     for i in range(n) : 
         #         col += graph(x , i)
 
+
+    return True
 
                 
  
