@@ -127,7 +127,7 @@ def forward_checking(graph ,x, y , n):
                 
  
                 
-def MRV(graph):
+def MRV(graph , n):
     x = 0
     y = 0
     lenDomain = 3
@@ -143,3 +143,12 @@ def MRV(graph):
     return x, y
 
 
+
+
+def isComplete(graph , n):
+    for i in range(n):
+        for j in range(n):
+            if graph[(i , j)].value == -1:
+                return False
+    
+    return True
