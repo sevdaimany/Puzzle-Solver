@@ -1,6 +1,7 @@
 import io
 import collections
 from Cell import Cell
+import copy
 
 mypuzzle = []
 mygraph = dict()
@@ -22,9 +23,36 @@ for i in range(n):
 
 for i in range(n):
     for ii in range(m):
-        mygraph[(i,ii)] = Cell(mypuzzle[i][ii])
+        if(mypuzzle[i][ii] == '-'):
+            mygraph[(i,ii)] = Cell(-1)
+        else:
+            mygraph[(i,ii)] = Cell(mypuzzle[i][ii])
+    
 
-# print(mygraph)
+
+
+def backtracking(graph , n):
+    if isComplete(graph , n):
+        return graph
+    
+    (x, y) = MRV(graph , n)
+    for d in graph[(x,y)].domain:
+        copyGraph = copy.deepcopy(graph)
+        copyGraph[(x, y)].value = d
+        satisfied = forward_checking(copyGraph , x , y, n)
+        if satisfied :
+            # graph = copy.deepcopy(copyGraph)
+            done = backtracking(copyGraph , n)
+            if (done):
+                return done
+            
+        else:
+            done = backtracking(graph , n)
+            if (done):
+                return done
+
+
+
 
 
 def forward_checking(graph ,x, y , n):
@@ -136,7 +164,7 @@ def MRV(graph , n):
             if graph[(i , j)].value == -1:
                 if len(graph[(i , j)].domain) == 1:
                     return i , j
-                if len(graph[(i , j).domain]) < lenDomain : 
+                if len(graph[(i , j)].domain) < lenDomain : 
                     x  = i 
                     y = j
     
@@ -152,3 +180,26 @@ def isComplete(graph , n):
                 return False
     
     return True
+
+
+def init(graph , n):
+    for i in range(n):
+        for j in range(n):
+            if graph[(i , j)].value != -1:
+                check = forward_checking(graph , i , j , n)
+                if check == False:
+                    return False
+    return True
+
+
+
+
+
+
+
+init(mygraph ,4)
+g = backtracking(mygraph , 4)
+for i in range(4):
+    for j in range(4):
+        print(i , j , g[(i,j)].value)
+
