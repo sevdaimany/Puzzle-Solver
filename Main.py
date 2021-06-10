@@ -35,9 +35,6 @@ for i in range(n):
             mygraph[(i,ii)] = Cell(-1)
         else:
             mygraph[(i,ii)] = Cell(int(mypuzzle[i][ii]))
-    
-
-mystr =''
 
 for i in range(n):
     unique_r[i] = None
@@ -45,26 +42,59 @@ for i in range(n):
 for i in range(m):
     unique_c[i] = None
 
-for i in range(n):
-    mystr =''
-    for ii in range(m):
-        if(mygraph[(i,ii)].value == -1):
-            break
-        mystr += str(mygraph[(i,ii)].value)
-    if(len(mystr) == m):
-        unique_r[i] = mystr
 
-for ii in range(m):
-    mystr =''
-    for i in range(n):
-        if(mygraph[(i,ii)].value == -1):
-            break
-        mystr += str(mygraph[(i,ii)].value)
-    if(len(mystr) == n):
-        unique_c[i] = mystr
+def check_unique(row = None ,column = None):
 
-print("hello")
+    mystr =''
+
+    if ( row == None and column == None):
+
+        for i in range(n):
+            mystr =''
+            for ii in range(m):
+                if(mygraph[(i,ii)].value == -1):
+                    break
+                mystr += str(mygraph[(i,ii)].value)
+            if(len(mystr) == m):
+                unique_r[i] = mystr
+
+        for ii in range(m):
+            mystr =''
+            for i in range(n):
+                if(mygraph[(i,ii)].value == -1):
+                    break
+                mystr += str(mygraph[(i,ii)].value)
+            if(len(mystr) == n):
+                unique_c[i] = mystr
+    else :
+
+        mystr =''
+        for ii in range(m):
+            if(mygraph[(row,ii)].value == -1):
+                break
+            mystr += str(mygraph[(row,ii)].value)
+
+        if(len(mystr) == m):
+            unique_r[i] = mystr
+        else:
+            unique_r[i] = None
+
         
+        mystr =''
+        for i in range(n):
+            if(mygraph[(i,column)].value == -1):
+                break
+            mystr += str(mygraph[(i,column)].value)
+
+        if(len(mystr) == n):
+            unique_c[i] = mystr
+        else:
+            unique_c[i] = None
+
+
+
+check_unique()
+print("hellp")     
 
 def backtracking(graph , n):
     if isComplete(graph , n):
