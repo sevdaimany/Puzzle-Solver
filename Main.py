@@ -8,6 +8,8 @@ import json
 
 mypuzzle = []
 mygraph = dict()
+unique_r = dict()
+unique_c = dict()
 steps = []
 startPuzzle = []
 eel.init("frontend")
@@ -35,7 +37,34 @@ for i in range(n):
             mygraph[(i,ii)] = Cell(int(mypuzzle[i][ii]))
     
 
+mystr =''
 
+for i in range(n):
+    unique_r[i] = None
+
+for i in range(m):
+    unique_c[i] = None
+
+for i in range(n):
+    mystr =''
+    for ii in range(m):
+        if(mygraph[(i,ii)].value == -1):
+            break
+        mystr += str(mygraph[(i,ii)].value)
+    if(len(mystr) == m):
+        unique_r[i] = mystr
+
+for ii in range(m):
+    mystr =''
+    for i in range(n):
+        if(mygraph[(i,ii)].value == -1):
+            break
+        mystr += str(mygraph[(i,ii)].value)
+    if(len(mystr) == n):
+        unique_c[i] = mystr
+
+print("hello")
+        
 
 def backtracking(graph , n):
     if isComplete(graph , n):
