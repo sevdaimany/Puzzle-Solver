@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle3.txt"
+address = ".\puzzles\puzzle0.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -38,12 +38,12 @@ for i in range(n):
 
 for i in range(n):
     unique_r[i] = None
-
-for i in range(m):
     unique_c[i] = None
 
 
-def check_unique(row = None ,column = None):
+
+
+def updatestr(graph ,n , row = None ,column = None):
 
     mystr =''
 
@@ -51,14 +51,14 @@ def check_unique(row = None ,column = None):
 
         for i in range(n):
             mystr =''
-            for ii in range(m):
+            for ii in range(n):
                 if(mygraph[(i,ii)].value == -1):
                     break
                 mystr += str(mygraph[(i,ii)].value)
-            if(len(mystr) == m):
+            if(len(mystr) == n):
                 unique_r[i] = mystr
 
-        for ii in range(m):
+        for ii in range(n):
             mystr =''
             for i in range(n):
                 if(mygraph[(i,ii)].value == -1):
@@ -69,15 +69,15 @@ def check_unique(row = None ,column = None):
     else :
 
         mystr =''
-        for ii in range(m):
+        for ii in range(n):
             if(mygraph[(row,ii)].value == -1):
                 break
             mystr += str(mygraph[(row,ii)].value)
 
-        if(len(mystr) == m):
-            unique_r[i] = mystr
+        if(len(mystr) == n):
+            unique_r[row] = mystr
         else:
-            unique_r[i] = None
+            unique_r[row] = None
 
         
         mystr =''
@@ -87,14 +87,37 @@ def check_unique(row = None ,column = None):
             mystr += str(mygraph[(i,column)].value)
 
         if(len(mystr) == n):
-            unique_c[i] = mystr
+            unique_c[column] = mystr
         else:
-            unique_c[i] = None
+            unique_c[column] = None
 
 
+def check_uniqe(n , x , y):
+    rowstring = unique_r[x]
+    columstring = unique_c[y]
 
-check_unique()
-print("hellp")     
+    if rowstring == None and columstring == None :
+        return True
+
+    
+    for i in range(n):
+        if i == x :
+            continue
+        if (rowstring == unique_r[i]) or (columstring == unique_r[i] and columstring != None):
+            return False
+
+    
+    for i in range(n):
+        if i == y :
+            continue
+        if (rowstring == unique_c[i] and rowstring != None) or (columstring == unique_c[i]) :
+            return False
+
+    return True
+        
+
+# updatestr(mygraph , n)
+    
 
 def backtracking(graph , n):
     if isComplete(graph , n):
@@ -217,7 +240,7 @@ def forward_checking(graph ,x, y , n):
                             return False 
 
 
-    return True
+    # return True
             
                 # if graph[(x, y)] == 0 and graph[(x  , y + i)] == 0:
                 #     if 0 in graph[(x, y + i/2)].domain:
@@ -228,16 +251,14 @@ def forward_checking(graph ,x, y , n):
         
 
     #    check Same  NOT SURE
-        
-        # row = ""
-        # col = ""
-        # if checkEmptyInCol == False : 
-        #     for i in range(n):
-        #         row += graph[(i , y)] 
 
-        # if checkEmptyInRow == False : 
-        #     for i in range(n) : 
-        #         col += graph(x , i)
+    updatestr(graph , n , x ,y)
+    if(not check_uniqe(n , x, y)):
+        return False
+    
+    return True
+        
+        
 
 
     
@@ -319,6 +340,8 @@ def removeConstraints(graph , x, y, n):
     checkEmptyInRow  = False
     checkEmptyInCol = False
 
+    updatestr(graph , n , x ,y)
+
 
                      
 #  check in row
@@ -387,6 +410,8 @@ def removeConstraints(graph , x, y, n):
         # if checkEmptyInCol == False : 
         #     for i in range(n):
         #         row 
+
+        
 
  
 def get_json_result(results):
