@@ -2,12 +2,17 @@ import io
 import collections
 from Cell import Cell
 import copy
+import eel
+import json
+
 
 mypuzzle = []
 mygraph = dict()
+steps = []
+eel.init("frontend")
 
 
-address = ".\puzzles\puzzle4.txt"
+address = ".\puzzles\puzzle3.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -35,9 +40,10 @@ def backtracking(graph , n):
     if isComplete(graph , n):
         return graph
     
-    (x, y) = MRV(graph , n)
+    (x, y) = MRV(graph, n)
     for d in graph[(x,y)].domain:
         graph[(x, y)].value = d
+        steps.append([x,y,d])
         satisfied = forward_checking(graph , x , y, n)
         if satisfied :
            done = backtracking(graph , n)
@@ -47,6 +53,7 @@ def backtracking(graph , n):
         
         removeConstraints(graph , x , y , n)
         graph[(x , y)].value = -1
+        steps.append([x,y,-1])
             
     
     
@@ -310,7 +317,7 @@ def removeConstraints(graph , x, y, n):
                 
             if zerosRow >= n/2 :
                 if 0 not in graph[(x , i)].domain:
-                    graph[(x , i)].append(0)
+                    graph[(x , i)].domain.append(0)
  
      #    check Same  NOT SURE
         
@@ -320,10 +327,25 @@ def removeConstraints(graph , x, y, n):
         #     for i in range(n):
         #         row 
 
-init(mygraph ,n)
-g = backtracking(mygraph , n)
-for i in range(n):
-    for j in range(n):
-        print(g[(i,j)].value , end = " ")
-    print()
+ 
+def get_json_result(results):
+    return json.dumps(results)
 
+
+@eel.expose
+def main():
+    init(mygraph ,n)
+    g = backtracking(mygraph , n)
+    for i in range(n):
+        for j in range(n):
+            print(g[(i,j)].value , end = " ")
+        print()
+    return get_json_result({
+        "steps" : steps,
+        "puzzle" : mypuzzle
+    })
+
+# print(mypuzzle)
+
+
+eel.start('index.html' ,size=(500,500))
