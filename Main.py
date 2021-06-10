@@ -9,6 +9,7 @@ import json
 mypuzzle = []
 mygraph = dict()
 steps = []
+startPuzzle = []
 eel.init("frontend")
 
 
@@ -224,6 +225,7 @@ def init(graph , n):
     for i in range(n):
         for j in range(n):
             if graph[(i , j)].value != -1:
+                startPuzzle.append([i , j , graph[(i , j)].value])
                 check = forward_checking(graph , i , j , n)
                 if check == False:
                     return False
@@ -342,7 +344,8 @@ def main():
         print()
     return get_json_result({
         "steps" : steps,
-        "puzzle" : mypuzzle
+        "puzzle" : startPuzzle,
+        "len" : n
     })
 
 # print(mypuzzle)
