@@ -45,7 +45,7 @@ def backtracking(graph , n):
                return graph
            
         
-        removeConstaints(graph , x , y , n)
+        removeConstraints(graph , x , y , n)
         graph[(x , y)].value = -1
             
     
