@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle3.txt"
+address = ".\puzzles\puzzle0.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -119,9 +119,7 @@ def check_uniqe(n , x , y):
 updatestr(mygraph , n)
     
 
-def backtracking(graph , n):
-
-    # maclist = []
+def backtracking(graph , n , cp):
 
     if isComplete(graph , n):
         return graph
@@ -130,10 +128,14 @@ def backtracking(graph , n):
     for d in graph[(x,y)].domain:
         graph[(x, y)].value = d
         steps.append([x,y,d])
-        # satisfied = forward_checking(graph , x , y, n)
-        satisfied = MAC(graph , x , y, n)
+
+        if cp == "forward" :
+            satisfied = forward_checking(graph , x , y, n)
+        elif cp == "MAC":
+            satisfied = MAC(graph , x , y, n)
+
         if satisfied :
-           done = backtracking(graph , n)
+           done = backtracking(graph , n , cp)
            if done:
                return graph
            
@@ -464,7 +466,7 @@ def get_json_result(results):
 @eel.expose
 def main():
     init(mygraph ,n)
-    g = backtracking(mygraph , n)
+    g = backtracking(mygraph , n , "forward")
     hasAnswer = True
     if g == None:
         hasAnswer = False
