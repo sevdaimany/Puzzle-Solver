@@ -3,12 +3,13 @@ const engine = Engine.create ();
 const {world} = engine;
 let render;
 let runner;
-let robot;
-let butters = [];
 // const unitLengthX = 110;
 // const unitLengthY = 110;
 let unitLengthX;
 let unitLengthY;
+let oneAndZeros ;
+
+
 
 function table (graph, horizontal, vertical) {
   const cellsHorizontal = horizontal;
@@ -103,9 +104,9 @@ function play (steps) {
       clearInterval (id);
     }
     if (check) {
+      let indexRow = steps[index][0];
+      let indexColumn = steps[index][1];
       if (steps[index][2] != -1) {
-        let indexRow = steps[index][0];
-        let indexColumn = steps[index][1];
         let type = steps[index][2];
         if (type === 1) {
           const dest = Bodies.rectangle (
@@ -125,6 +126,7 @@ function play (steps) {
             }
           );
           World.add (world, dest);
+          oneAndZeros[indexRow][indexColumn] = dest;
         } else if (type === 0) {
           const dest = Bodies.rectangle (
             (indexColumn + 0.5) * unitLengthX,
@@ -143,6 +145,7 @@ function play (steps) {
             }
           );
           World.add (world, dest);
+          oneAndZeros[indexRow][indexColumn] = dest;
         }
       } else {
         console.log("here")
@@ -162,7 +165,9 @@ function play (steps) {
             },
           }
         );
-        World.add (world, dest);
+        // World.add (world, dest);
+          World.remove(world , oneAndZeros[indexRow][indexColumn]);
+        
       }
     }
   }, 500);
@@ -175,7 +180,10 @@ async function main () {
   let puzzle = result['puzzle'];
   let len = result['len'];
   console.log (steps);
-  // console.log (puzzle);
+  oneAndZeros = new Array(len);
+  for (let i = 0 ; i < len ; i++){
+    oneAndZeros[i] = new Array(len);
+  }
   table (puzzle, len, len);
   play(steps);
 }
