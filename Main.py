@@ -8,12 +8,14 @@ import json
 
 mypuzzle = []
 mygraph = dict()
+unique_r = dict()
+unique_c = dict()
 steps = []
 startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle3.txt"
+address = ".\puzzles\puzzle5.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -33,9 +35,89 @@ for i in range(n):
             mygraph[(i,ii)] = Cell(-1)
         else:
             mygraph[(i,ii)] = Cell(int(mypuzzle[i][ii]))
+
+for i in range(n):
+    unique_r[i] = None
+    unique_c[i] = None
+
+
+
+
+def updatestr(graph ,n , row = None ,column = None):
+
+    mystr =''
+
+    if ( row == None and column == None):
+
+        for i in range(n):
+            mystr =''
+            for ii in range(n):
+                if(mygraph[(i,ii)].value == -1):
+                    break
+                mystr += str(mygraph[(i,ii)].value)
+            if(len(mystr) == n):
+                unique_r[i] = mystr
+
+        for ii in range(n):
+            mystr =''
+            for i in range(n):
+                if(mygraph[(i,ii)].value == -1):
+                    break
+                mystr += str(mygraph[(i,ii)].value)
+            if(len(mystr) == n):
+                unique_c[i] = mystr
+    else :
+
+        mystr =''
+        for ii in range(n):
+            if(mygraph[(row,ii)].value == -1):
+                break
+            mystr += str(mygraph[(row,ii)].value)
+
+        if(len(mystr) == n):
+            unique_r[row] = mystr
+        else:
+            unique_r[row] = None
+
+        
+        mystr =''
+        for i in range(n):
+            if(mygraph[(i,column)].value == -1):
+                break
+            mystr += str(mygraph[(i,column)].value)
+
+        if(len(mystr) == n):
+            unique_c[column] = mystr
+        else:
+            unique_c[column] = None
+
+
+def check_uniqe(n , x , y):
+    rowstring = unique_r[x]
+    columstring = unique_c[y]
+
+    if rowstring == None and columstring == None :
+        return True
+
     
+    for i in range(n):
+        if i == x :
+            continue
+        if (rowstring == unique_r[i] and rowstring != None) :
+            return False
 
+    
+    for i in range(n):
+        if i == y :
+            continue
+        if (columstring == unique_c[i] and columstring != None) :
+            return False
 
+    return True
+        
+
+updatestr(mygraph , n)
+    
 
 def backtracking(graph , n):
     if isComplete(graph , n):
@@ -54,6 +136,7 @@ def backtracking(graph , n):
         
         removeConstraints(graph , x , y , n)
         graph[(x , y)].value = -1
+        updatestr(graph , n , x ,y)
         steps.append([x,y,-1])
             
     
@@ -80,7 +163,7 @@ def forward_checking(graph ,x, y , n):
 
     checkEmptyInRow  = False
     checkEmptyInCol = False
-# check number of 0's and 1's
+    # check number of 0's and 1's
     for i in range(n):
         if graph[(i , y)].value == -1:
             checkEmptyInCol = True
@@ -113,7 +196,7 @@ def forward_checking(graph ,x, y , n):
         
 
     value = graph[(x, y)].value 
-#  check in row
+    #  check in row
     for i in range(-1 , 2 , 2):
        
         if validIndex(x + i , n)  and graph[(x + i , y)].value == value:
@@ -158,7 +241,7 @@ def forward_checking(graph ,x, y , n):
                             return False 
 
 
-    return True
+    # return True
             
                 # if graph[(x, y)] == 0 and graph[(x  , y + i)] == 0:
                 #     if 0 in graph[(x, y + i/2)].domain:
@@ -169,16 +252,14 @@ def forward_checking(graph ,x, y , n):
         
 
     #    check Same  NOT SURE
-        
-        # row = ""
-        # col = ""
-        # if checkEmptyInCol == False : 
-        #     for i in range(n):
-        #         row += graph[(i , y)] 
 
-        # if checkEmptyInRow == False : 
-        #     for i in range(n) : 
-        #         col += graph(x , i)
+    updatestr(graph , n , x ,y)
+    if(not check_uniqe(n , x, y)):
+        return False
+    
+    return True
+        
+        
 
 
     
@@ -260,9 +341,8 @@ def removeConstraints(graph , x, y, n):
     checkEmptyInRow  = False
     checkEmptyInCol = False
 
-
-                     
-#  check in row
+                
+    #  check in row
     for i in range(-1 , 2 , 2):
            
         if   validIndex(x + i , n) and graph[(x + i , y)].value == value:
@@ -297,7 +377,7 @@ def removeConstraints(graph , x, y, n):
                         graph[(x, y +  i)].domain.append(value)
                       
 
-# check number of 0's and 1's
+    # check number of 0's and 1's
     for i in range(n):
         if graph[(i , y)].value == -1:
             checkEmptyInCol = True
@@ -323,11 +403,8 @@ def removeConstraints(graph , x, y, n):
  
      #    check Same  NOT SURE
         
-        # row = ""
-        # col = ""
-        # if checkEmptyInCol == False : 
-        #     for i in range(n):
-        #         row 
+        
+        
 
  
 def get_json_result(results):
