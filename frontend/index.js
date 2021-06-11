@@ -7,9 +7,8 @@ let runner;
 // const unitLengthY = 110;
 let unitLengthX;
 let unitLengthY;
-let oneAndZeros ;
-
-
+let oneAndZeros;
+let message ;
 
 function table (graph, horizontal, vertical) {
   const cellsHorizontal = horizontal;
@@ -31,7 +30,7 @@ function table (graph, horizontal, vertical) {
       height,
       wireframes: false,
       // background: '#f8f5f1',
-      background: 'white',
+      background: '#1e272e',
 
       // background : '#bbdfc8',
     },
@@ -108,6 +107,7 @@ function play (steps) {
       let indexColumn = steps[index][1];
       if (steps[index][2] != -1) {
         let type = steps[index][2];
+        message.innerText = `(${indexRow}, ${indexColumn}) Added ${type}`;
         if (type === 1) {
           const dest = Bodies.rectangle (
             (indexColumn + 0.5) * unitLengthX,
@@ -148,7 +148,7 @@ function play (steps) {
           oneAndZeros[indexRow][indexColumn] = dest;
         }
       } else {
-        console.log("here")
+        message.innerText = `(${indexRow}, ${indexColumn}) removed`;
         const dest = Bodies.rectangle (
           (indexColumn + 0.5) * unitLengthX,
           (indexRow + 0.5) * unitLengthY,
@@ -166,11 +166,10 @@ function play (steps) {
           }
         );
         // World.add (world, dest);
-          World.remove(world , oneAndZeros[indexRow][indexColumn]);
-        
+        World.remove (world, oneAndZeros[indexRow][indexColumn]);
       }
     }
-  }, 500);
+  }, 1000);
 }
 
 async function main () {
@@ -179,13 +178,14 @@ async function main () {
   let steps = result['steps'];
   let puzzle = result['puzzle'];
   let len = result['len'];
+  message = document.querySelector('h1');
   console.log (steps);
-  oneAndZeros = new Array(len);
-  for (let i = 0 ; i < len ; i++){
-    oneAndZeros[i] = new Array(len);
+  oneAndZeros = new Array (len);
+  for (let i = 0; i < len; i++) {
+    oneAndZeros[i] = new Array (len);
   }
   table (puzzle, len, len);
-  play(steps);
+  play (steps);
 }
 
 main ();
