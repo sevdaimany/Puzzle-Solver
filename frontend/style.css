@@ -1,0 +1,16 @@
+body {  
+    margin : 2%  0% 0% 13%;
+    background-image: url('./icons/backgound.jpg');
+    background-size: cover;
+}   
+h1{
+    width: 300px;
+    text-align: center;
+    margin : 0%  0% 1% 30%;
+    text-transform: uppercase;
+    /* border-bottom: 3px solid DarkRed;
+    color:DarkRed;
+     */
+    border-bottom: 3px solid #182C61;
+    color: #182C61;
+}
