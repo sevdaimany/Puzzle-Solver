@@ -7,9 +7,8 @@ let robot;
 let butters = [];
 // const unitLengthX = 110;
 // const unitLengthY = 110;
-// const unitLengthX  = 0;
-// const unitLengthY  = 0;
-
+let unitLengthX;
+let unitLengthY;
 
 function table (graph, horizontal, vertical) {
   const cellsHorizontal = horizontal;
@@ -18,10 +17,8 @@ function table (graph, horizontal, vertical) {
   // const height = cellsVertical * 110;
   const width = 1100;
   const height = 700;
-  const unitLengthX = width / horizontal;
-  const unitLengthY = height /vertical ;
-
-
+  unitLengthX = width / horizontal;
+  unitLengthY = height / vertical;
 
   engine.world.gravity.y = 0;
   render = Render.create ({
@@ -32,7 +29,9 @@ function table (graph, horizontal, vertical) {
       width,
       height,
       wireframes: false,
-      background: '#f8f5f1',
+      // background: '#f8f5f1',
+      background: 'white',
+
       // background : '#bbdfc8',
     },
   });
@@ -94,6 +93,81 @@ function table (graph, horizontal, vertical) {
   }
 }
 
+function play (steps) {
+  let index = -1;
+  let check = true;
+  let id = setInterval (function () {
+    index++;
+    if (index == steps.length) {
+      check = false;
+      clearInterval (id);
+    }
+    if (check) {
+      if (steps[index][2] != -1) {
+        let indexRow = steps[index][0];
+        let indexColumn = steps[index][1];
+        let type = steps[index][2];
+        if (type === 1) {
+          const dest = Bodies.rectangle (
+            (indexColumn + 0.5) * unitLengthX,
+            (indexRow + 0.5) * unitLengthY,
+            unitLengthX - 10,
+            unitLengthY - 10,
+            {
+              isStatic: true,
+              render: {
+                sprite: {
+                  texture: './icons/1.png',
+                  xScale: 0.06,
+                  yScale: 0.06,
+                },
+              },
+            }
+          );
+          World.add (world, dest);
+        } else if (type === 0) {
+          const dest = Bodies.rectangle (
+            (indexColumn + 0.5) * unitLengthX,
+            (indexRow + 0.5) * unitLengthY,
+            unitLengthX - 10,
+            unitLengthY - 10,
+            {
+              isStatic: true,
+              render: {
+                sprite: {
+                  texture: './icons/0.png',
+                  xScale: 0.06,
+                  yScale: 0.06,
+                },
+              },
+            }
+          );
+          World.add (world, dest);
+        }
+      } else {
+        console.log("here")
+        const dest = Bodies.rectangle (
+          (indexColumn + 0.5) * unitLengthX,
+          (indexRow + 0.5) * unitLengthY,
+          unitLengthX - 10,
+          unitLengthY - 10,
+          {
+            isStatic: true,
+            render: {
+              fillStyle: 'white',
+              sprite: {
+                xScale: 0.06,
+                yScale: 0.06,
+              },
+            },
+          }
+        );
+        World.add (world, dest);
+      }
+    }
+  }, 500);
+}
+
 async function main () {
   let resultJson = await eel.main () ();
   let result = JSON.parse (resultJson);
@@ -101,8 +175,9 @@ async function main () {
   let puzzle = result['puzzle'];
   let len = result['len'];
   console.log (steps);
-  console.log (puzzle);
+  // console.log (puzzle);
   table (puzzle, len, len);
+  play(steps);
 }
 
 main ();
