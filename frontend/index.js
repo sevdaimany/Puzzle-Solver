@@ -8,7 +8,7 @@ let runner;
 let unitLengthX;
 let unitLengthY;
 let oneAndZeros;
-let message ;
+let message;
 
 function table (graph, horizontal, vertical) {
   const cellsHorizontal = horizontal;
@@ -178,14 +178,18 @@ async function main () {
   let steps = result['steps'];
   let puzzle = result['puzzle'];
   let len = result['len'];
-  message = document.querySelector('h1');
-  console.log (steps);
-  oneAndZeros = new Array (len);
-  for (let i = 0; i < len; i++) {
-    oneAndZeros[i] = new Array (len);
-  }
+  let hasAnswer = result['hasAnswer'];
   table (puzzle, len, len);
-  play (steps);
+  if (hasAnswer === false) {
+    alert ("The Puzzle does'nt have any solution!");
+  } else {
+    message = document.querySelector ('h1');
+    oneAndZeros = new Array (len);
+    for (let i = 0; i < len; i++) {
+      oneAndZeros[i] = new Array (len);
+    }
+    play (steps);
+  }
 }
 
 main ();

@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle5.txt"
+address = ".\puzzles\puzzle0.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -415,14 +415,20 @@ def get_json_result(results):
 def main():
     init(mygraph ,n)
     g = backtracking(mygraph , n)
-    for i in range(n):
-        for j in range(n):
-            print(g[(i,j)].value , end = " ")
-        print()
+    hasAnswer = True
+    if g == None:
+        hasAnswer = False
+        print("The Puzzle does'nt have any solution!")
+    else:
+        for i in range(n):
+            for j in range(n):
+                print(g[(i,j)].value , end = " ")
+            print()
     return get_json_result({
         "steps" : steps,
         "puzzle" : startPuzzle,
-        "len" : n
+        "len" : n,
+        "hasAnswer" : hasAnswer
     })
 
 # print(mypuzzle)
