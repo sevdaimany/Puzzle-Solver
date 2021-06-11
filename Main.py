@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle0.txt"
+address = ".\puzzles\puzzle5.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -103,20 +103,20 @@ def check_uniqe(n , x , y):
     for i in range(n):
         if i == x :
             continue
-        if (rowstring == unique_r[i]) or (columstring == unique_r[i] and columstring != None):
+        if (rowstring == unique_r[i] and rowstring != None) :
             return False
 
     
     for i in range(n):
         if i == y :
             continue
-        if (rowstring == unique_c[i] and rowstring != None) or (columstring == unique_c[i]) :
+        if (columstring == unique_c[i] and columstring != None) :
             return False
 
     return True
         
 
-# updatestr(mygraph , n)
+updatestr(mygraph , n)
     
 
 def backtracking(graph , n):
@@ -136,6 +136,7 @@ def backtracking(graph , n):
         
         removeConstraints(graph , x , y , n)
         graph[(x , y)].value = -1
+        updatestr(graph , n , x ,y)
         steps.append([x,y,-1])
             
     
@@ -162,7 +163,7 @@ def forward_checking(graph ,x, y , n):
 
     checkEmptyInRow  = False
     checkEmptyInCol = False
-# check number of 0's and 1's
+    # check number of 0's and 1's
     for i in range(n):
         if graph[(i , y)].value == -1:
             checkEmptyInCol = True
@@ -195,7 +196,7 @@ def forward_checking(graph ,x, y , n):
         
 
     value = graph[(x, y)].value 
-#  check in row
+    #  check in row
     for i in range(-1 , 2 , 2):
        
         if validIndex(x + i , n)  and graph[(x + i , y)].value == value:
@@ -340,11 +341,8 @@ def removeConstraints(graph , x, y, n):
     checkEmptyInRow  = False
     checkEmptyInCol = False
 
-    updatestr(graph , n , x ,y)
-
-
-                     
-#  check in row
+                
+    #  check in row
     for i in range(-1 , 2 , 2):
            
         if   validIndex(x + i , n) and graph[(x + i , y)].value == value:
@@ -379,7 +377,7 @@ def removeConstraints(graph , x, y, n):
                         graph[(x, y +  i)].domain.append(value)
                       
 
-# check number of 0's and 1's
+    # check number of 0's and 1's
     for i in range(n):
         if graph[(i , y)].value == -1:
             checkEmptyInCol = True
@@ -405,12 +403,7 @@ def removeConstraints(graph , x, y, n):
  
      #    check Same  NOT SURE
         
-        # row = ""
-        # col = ""
-        # if checkEmptyInCol == False : 
-        #     for i in range(n):
-        #         row 
-
+        
         
 
  
