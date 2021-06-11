@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle0.txt"
+address = ".\puzzles\puzzle3.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -120,6 +120,9 @@ updatestr(mygraph , n)
     
 
 def backtracking(graph , n):
+
+    # maclist = []
+
     if isComplete(graph , n):
         return graph
     
@@ -127,7 +130,8 @@ def backtracking(graph , n):
     for d in graph[(x,y)].domain:
         graph[(x, y)].value = d
         steps.append([x,y,d])
-        satisfied = forward_checking(graph , x , y, n)
+        # satisfied = forward_checking(graph , x , y, n)
+        satisfied = MAC(graph , x , y, n)
         if satisfied :
            done = backtracking(graph , n)
            if done:
@@ -146,7 +150,7 @@ def backtracking(graph , n):
 
 
 
-def forward_checking(graph ,x, y , n):
+def forward_checking(graph ,x, y , n , checklistempty = True):
     onesCol = 0
     zerosCol = 0
     onesRow = 0
@@ -161,6 +165,8 @@ def forward_checking(graph ,x, y , n):
         elif graph[(x , i)].value == 0:
             zerosRow +=1
 
+    checklist = []
+
     checkEmptyInRow  = False
     checkEmptyInCol = False
     # check number of 0's and 1's
@@ -170,13 +176,17 @@ def forward_checking(graph ,x, y , n):
             if onesCol >= n/2 :
                 if 1 in graph[(i , y)].domain:
                     graph[(i , y)].domain.remove(1)
+                    if not checklistempty :
+                        checklist.append((i , y))
                     if len(graph[(i , y)].domain) == 0:
-                        return False
+                        return False , checklist
             if  zerosCol >= n/2 :
                 if 0 in graph[(i , y)].domain:
                     graph[(i , y)].domain.remove(0)
+                    if not checklistempty :
+                        checklist.append((i , y))
                     if len(graph[(i , y)].domain) == 0:
-                        return False
+                        return False , checklist
             
 
         if graph[(x , i)].value == -1:
@@ -184,15 +194,19 @@ def forward_checking(graph ,x, y , n):
             if onesRow >= n/2 :
                 if 1 in graph[(x , i)].domain:
                     graph[(x , i)].domain.remove(1)
+                    if not checklistempty :
+                        checklist.append((x , i))
                     if len(graph[(x , i)].domain) == 0:
-                        return False
+                        return False , checklist
             
                 
             if zerosRow >= n/2 :
                 if 0 in graph[(x , i)].domain:
                     graph[(x , i)].domain.remove(0)
+                    if not checklistempty :
+                        checklist.append((x , i))
                     if len(graph[(x , i)].domain) == 0:
-                        return False
+                        return False , checklist
         
 
     value = graph[(x, y)].value 
@@ -203,33 +217,43 @@ def forward_checking(graph ,x, y , n):
             if validIndex(x + 2 * i, n) and graph[(x + 2 * i , y)].value == -1:
                 if value in graph[(x + 2 * i , y)].domain:
                     graph[(x + 2 * i , y )].domain.remove(value)
+                    if not checklistempty :
+                        checklist.append((x + 2 * i , y ))
                     if len(graph[(x + 2 * i,  y)].domain) == 0:
-                        return False
+                        return False , checklist
             if  validIndex(x - i , n) and graph[(x  - i , y)].value == -1 :
                 if value in graph[(x - i , y)].domain:
                     graph[(x - i , y )].domain.remove(value)
+                    if not checklistempty :
+                        checklist.append((x - i , y ))
                     if len(graph[(x - i,  y)].domain) == 0:
-                        return False 
+                        return False , checklist
 
         if validIndex(x + i*2 , n) and graph[(x + i*2 , y)].value == value:
                 if  validIndex(x + i , n) and graph[(x + i  , y )].value == -1:
                     if value in graph[(x + i , y )].domain:
                         graph[(x + i , y )].domain.remove(value)
+                        if not checklistempty :
+                            checklist.append((x + i , y ))
                         if len(graph[(x + i, y)].domain) == 0:
-                            return False 
+                            return False , checklist
 
 
         if  validIndex(y + i , n) and graph[(x , y + i)].value == value  :
                 if validIndex( y + 2 * i, n) and  graph[(x ,y + 2 * i)].value == -1  :
                     if value in graph[(x ,y + 2 * i)].domain:
                         graph[(x ,y+ 2 * i)].domain.remove(value)
+                        if not checklistempty :
+                            checklist.append((x ,y+ 2 * i))
                         if len(graph[(x, y  + 2 * i)].domain) == 0:
-                            return False 
+                            return False , checklist
                 if  validIndex(y - i , n) and graph[(x  , y - i)].value == -1:
                     if value in graph[(x , y - i)].domain:
                         graph[(x , y - i )].domain.remove(value)
+                        if not checklistempty :
+                            checklist.append((x , y - i ))
                         if len(graph[(x ,  y - i)].domain) == 0:
-                            return False 
+                            return False , checklist
 
                             
                         
@@ -237,8 +261,10 @@ def forward_checking(graph ,x, y , n):
                 if  validIndex( y  + i , n) and graph[(x , y+ i)].value == -1:
                     if value in graph[(x, y +  i)].domain:
                         graph[(x, y +  i)].domain.remove(value)
+                        if not checklistempty :
+                            checklist.append((x, y +  i))
                         if len(graph[(x, y + i)].domain) == 0:
-                            return False 
+                            return False , checklist
 
 
     # return True
@@ -255,12 +281,36 @@ def forward_checking(graph ,x, y , n):
 
     updatestr(graph , n , x ,y)
     if(not check_uniqe(n , x, y)):
-        return False
+        return False , checklist
     
-    return True
+    return True , checklist
+    
         
         
 
+
+    
+def MAC(graph ,x, y , n):
+
+    checklist=[]
+    checkedlist=[]
+    addmac =[]
+
+    checklist.append((x,y))
+    while len(checklist) != 0 :
+        x , y = checklist[0]
+        result , addmac = forward_checking(graph , x ,y , n , False)
+        checklist.remove((x,y))
+        checkedlist.extend(addmac)
+        if result :
+            checklist.extend(addmac)
+        else:
+            for x ,y  in checklist:
+                removeConstraints(graph , x ,y , n)
+            return False 
+    
+    return True 
+    
 
     
 
