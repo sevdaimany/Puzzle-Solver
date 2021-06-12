@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle0.txt"
+address = ".\puzzles\puzzle5.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -120,7 +120,7 @@ updatestr(mygraph , n)
     
 
 def backtracking(graph , n , cp):
-
+    
     if isComplete(graph , n):
         return graph
     
@@ -133,6 +133,7 @@ def backtracking(graph , n , cp):
             satisfied = forward_checking(graph , x , y, n)
         elif cp == "MAC":
             satisfied = MAC(graph , x , y, n)
+            graph[(x, y)].value = d
 
         if satisfied :
            done = backtracking(graph , n , cp)
@@ -301,13 +302,17 @@ def MAC(graph ,x, y , n):
     checklist.append((x,y))
     while len(checklist) != 0 :
         x , y = checklist[0]
+        if len(graph[(x, y)].domain) == 1 or graph[(x,y)].value != -1: 
+            graph[(x , y)].value = graph[(x , y)].domain[0]
         result , addmac = forward_checking(graph , x ,y , n , False)
         checklist.remove((x,y))
-        checkedlist.extend(addmac)
+        checkedlist.append((x,y))
         if result :
+            graph[(x , y)].value = -1
             checklist.extend(addmac)
         else:
-            for x ,y  in checklist:
+            for x ,y  in checkedlist:
+                graph[(x , y)].value = -1
                 removeConstraints(graph , x ,y , n)
             return False 
     
