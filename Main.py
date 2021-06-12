@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle5.txt"
+address = ".\puzzles\puzzle0.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -302,13 +302,12 @@ def MAC(graph ,x, y , n):
     checklist.append((x,y))
     while len(checklist) != 0 :
         x , y = checklist[0]
-        if len(graph[(x, y)].domain) == 1 or graph[(x,y)].value != -1: 
+        if len(graph[(x, y)].domain) == 1 and graph[(x,y)].value == -1: 
             graph[(x , y)].value = graph[(x , y)].domain[0]
         result , addmac = forward_checking(graph , x ,y , n , False)
         checklist.remove((x,y))
         checkedlist.append((x,y))
         if result :
-            graph[(x , y)].value = -1
             checklist.extend(addmac)
         else:
             for x ,y  in checkedlist:
@@ -316,6 +315,10 @@ def MAC(graph ,x, y , n):
                 removeConstraints(graph , x ,y , n)
             return False 
     
+
+    for x ,y  in checkedlist:
+        graph[(x , y)].value = -1
+
     return True 
     
 
@@ -471,7 +474,7 @@ def get_json_result(results):
 @eel.expose
 def main():
     init(mygraph ,n)
-    g = backtracking(mygraph , n , "forward")
+    g = backtracking(mygraph , n , "MAC")
     hasAnswer = True
     if g == None:
         hasAnswer = False
