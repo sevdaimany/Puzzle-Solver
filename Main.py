@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle0.txt"
+address = ".\puzzles\puzzle5.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -286,6 +286,10 @@ def forward_checking(graph ,x, y , n , checklistempty = True):
     if(not check_uniqe(n , x, y)):
         return False , checklist
     
+
+    if -1 in graph[(x , y)].domain :
+        graph[(x , y)].domain.remove(-1)
+
     return True , checklist
     
         
@@ -305,6 +309,10 @@ def MAC(graph ,x, y , n):
         if len(graph[(x, y)].domain) == 1 and graph[(x,y)].value == -1: 
             graph[(x , y)].value = graph[(x , y)].domain[0]
         result , addmac = forward_checking(graph , x ,y , n , False)
+
+        if -1 in graph[(x , y)].domain :
+            graph[(x , y)].domain.remove(-1)
+
         checklist.remove((x,y))
         checkedlist.append((x,y))
         if result :
@@ -461,7 +469,10 @@ def removeConstraints(graph , x, y, n):
                 if 0 not in graph[(x , i)].domain:
                     graph[(x , i)].domain.append(0)
  
-     #    check Same  NOT SURE
+    #    check Same  NOT SURE
+
+    if -1 in graph[(x , y)].domain :
+        graph[(x , y)].domain.remove(-1)
         
         
         
