@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle5.txt"
+address = ".\puzzles\puzzle1.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -130,7 +130,7 @@ def backtracking(graph , n , cp):
         steps.append([x,y,d])
 
         if cp == "forward" :
-            satisfied = forward_checking(graph , x , y, n)
+            satisfied , emptylist = forward_checking(graph , x , y, n)
         elif cp == "MAC":
             satisfied = MAC(graph , x , y, n)
             graph[(x, y)].value = d
@@ -485,7 +485,7 @@ def get_json_result(results):
 @eel.expose
 def main():
     init(mygraph ,n)
-    g = backtracking(mygraph , n , "MAC")
+    g = backtracking(mygraph , n , "forward")
     hasAnswer = True
     if g == None:
         hasAnswer = False
