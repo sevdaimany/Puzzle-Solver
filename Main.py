@@ -134,25 +134,25 @@ def backtracking(graph , n , cp):
         elif cp == "MAC":
             satisfied , mycheckedlist = MAC(graph , x , y, n)
             graph[(x, y)].value = d
+            graph[(x,y)].maclist = mycheckedlist
 
         if satisfied :
-            if cp == "MAC":
-                graph[(x,y)].maclist = mycheckedlist
             
             done = backtracking(graph , n , cp)
             if done:
                 return graph
-           
         
-        if cp == "forward" :
-            removeConstraints(graph , x , y , n)
-        elif cp == "MAC":
+    
+        
+        if cp == "MAC" :
             for xx ,yy,v  in graph[(x,y)].maclist:
                 graph[(xx, yy)].value = v
                 removeConstraints(graph , xx ,yy , n)
                 graph[(xx , yy)].value = -1
+        elif cp == "forward" :
+            removeConstraints(graph , x , y , n)
             
-        # removeConstraints(graph , x , y , n)
+        removeConstraints(graph , x , y , n)
         graph[(x , y)].value = -1
         updatestr(graph , n , x ,y)
         steps.append([x,y,-1])
@@ -311,7 +311,6 @@ def MAC(graph ,x, y , n):
     checkedlist=[]
     addmac =[]
 
-    xx , yy = x , y
     checklist.append((x,y))
     while len(checklist) != 0 :
         x , y = checklist[0]
@@ -325,10 +324,10 @@ def MAC(graph ,x, y , n):
         if result :
             checklist.extend(addmac)
         else:
-            for x ,y ,v  in checkedlist:
-                removeConstraints(graph , x ,y , n)
-                graph[(x , y)].value = -1
-            return False , []
+            # for x ,y ,v  in checkedlist:
+            #     removeConstraints(graph , x ,y , n)
+            #     graph[(x , y)].value = -1
+            return False , checkedlist
     
 
     for x ,y,v  in checkedlist:
