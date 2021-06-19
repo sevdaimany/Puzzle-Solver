@@ -15,7 +15,7 @@ startPuzzle = []
 eel.init("frontend")
 
 
-address = ".\puzzles\puzzle1.txt"
+address = ".\puzzles\puzzle3.txt"
 with open(address) as reader :
     myinput = reader.read()
 
@@ -132,16 +132,27 @@ def backtracking(graph , n , cp):
         if cp == "forward" :
             satisfied , emptylist = forward_checking(graph , x , y, n)
         elif cp == "MAC":
-            satisfied = MAC(graph , x , y, n)
+            satisfied , mycheckedlist = MAC(graph , x , y, n)
             graph[(x, y)].value = d
 
         if satisfied :
-           done = backtracking(graph , n , cp)
-           if done:
-               return graph
+            if cp == "MAC":
+                graph[(x,y)].maclist = mycheckedlist
+            
+            done = backtracking(graph , n , cp)
+            if done:
+                return graph
            
         
-        removeConstraints(graph , x , y , n)
+        if cp == "forward" :
+            removeConstraints(graph , x , y , n)
+        elif cp == "MAC":
+            for xx ,yy,v  in graph[(x,y)].maclist:
+                graph[(xx, yy)].value = v
+                removeConstraints(graph , xx ,yy , n)
+                graph[(xx , yy)].value = -1
+            
+        # removeConstraints(graph , x , y , n)
         graph[(x , y)].value = -1
         updatestr(graph , n , x ,y)
         steps.append([x,y,-1])
@@ -287,9 +298,6 @@ def forward_checking(graph ,x, y , n , checklistempty = True):
         return False , checklist
     
 
-    if -1 in graph[(x , y)].domain :
-        graph[(x , y)].domain.remove(-1)
-
     return True , checklist
     
         
@@ -303,6 +311,7 @@ def MAC(graph ,x, y , n):
     checkedlist=[]
     addmac =[]
 
+    xx , yy = x , y
     checklist.append((x,y))
     while len(checklist) != 0 :
         x , y = checklist[0]
@@ -310,24 +319,24 @@ def MAC(graph ,x, y , n):
             graph[(x , y)].value = graph[(x , y)].domain[0]
         result , addmac = forward_checking(graph , x ,y , n , False)
 
-        if -1 in graph[(x , y)].domain :
-            graph[(x , y)].domain.remove(-1)
-
+        v = graph[(x , y)].value
         checklist.remove((x,y))
-        checkedlist.append((x,y))
+        checkedlist.append((x,y,v))
         if result :
             checklist.extend(addmac)
         else:
-            for x ,y  in checkedlist:
-                graph[(x , y)].value = -1
+            for x ,y ,v  in checkedlist:
                 removeConstraints(graph , x ,y , n)
-            return False 
+                graph[(x , y)].value = -1
+            return False , []
     
 
-    for x ,y  in checkedlist:
+    for x ,y,v  in checkedlist:
         graph[(x , y)].value = -1
 
-    return True 
+
+
+    return True , checkedlist
     
 
     
@@ -415,27 +424,27 @@ def removeConstraints(graph , x, y, n):
            
         if   validIndex(x + i , n) and graph[(x + i , y)].value == value:
             if  validIndex(x + 2 * i , n) and graph[(x + 2 * i , y)].value == -1:
-                if value not in graph[(x + 2 * i , y)].domain:
+                if value not in graph[(x + 2 * i , y)].domain :
                     graph[(x + 2 * i , y )].domain.append(value)
                   
             if  validIndex(x - i,n) and graph[(x  - i , y)].value == -1:
-                if value not  in graph[(x - i , y)].domain:
+                if value not  in graph[(x - i , y)].domain :
                     graph[(x - i , y )].domain.append(value)
                   
 
         if validIndex(x + i*2 , n) and graph[(x + i*2 , y)].value == value :
                 if  validIndex(x + i,n) and graph[(x + i  , y )].value == -1:
-                    if value not in graph[(x + i , y )].domain:
+                    if value not in graph[(x + i , y )].domain :
                         graph[(x + i , y )].domain.append(value)
                      
 
         if   validIndex(y + i , n) and graph[(x , y + i)].value == value :
                 if  validIndex(y + 2 * i,n) and graph[(x ,y + 2 * i)].value == -1:
-                    if value not in graph[(x ,y + 2 * i)].domain:
+                    if value not in graph[(x ,y + 2 * i)].domain :
                         graph[(x ,y+ 2 * i)].domain.append(value)
                          
                 if  validIndex(y - i,n) and graph[(x  , y - i)].value == -1 :
-                    if value not  in graph[(x , y - i)].domain:
+                    if value not  in graph[(x , y - i)].domain :
                         graph[(x , y - i )].domain.append(value)
                        
 
@@ -471,8 +480,6 @@ def removeConstraints(graph , x, y, n):
  
     #    check Same  NOT SURE
 
-    if -1 in graph[(x , y)].domain :
-        graph[(x , y)].domain.remove(-1)
         
         
         
@@ -485,11 +492,12 @@ def get_json_result(results):
 @eel.expose
 def main():
     init(mygraph ,n)
-    g = backtracking(mygraph , n , "forward")
+    g = backtracking(mygraph , n , "MAC")
     hasAnswer = True
     if g == None:
         hasAnswer = False
         print("The Puzzle does'nt have any solution!")
+        # pass
     else:
         for i in range(n):
             for j in range(n):

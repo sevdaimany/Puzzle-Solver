@@ -6,3 +6,4 @@ class Cell:
             self.satisfied = True
         else :
             self.satisfied = False
+        self.maclist = []
